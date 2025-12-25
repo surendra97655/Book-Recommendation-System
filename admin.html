@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BookWise</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--secondary-color);
+            color: var(--white);
+            padding: 2rem;
+        }
+
+        .sidebar .logo {
+            color: var(--white);
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .main-content {
+            background: #f4f6f9;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .bg-purple {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .bg-orange {
+            background: rgba(255, 165, 0, 0.1);
+            color: orange;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border-collapse: collapse;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .action-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Override */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            width: 400px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-book-open"></i> BookWise Admin
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" class="active" onclick="switchTab('dashboard')"><i class="fas fa-th-large"></i>
+                        Dashboard</a></li>
+                <li><a href="#" onclick="switchTab('books')"><i class="fas fa-book"></i> Manage Books</a></li>
+                <li><a href="#" onclick="switchTab('users')"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" onclick="switchTab('reviews')"><i class="fas fa-comment"></i> Reviews</a></li>
+                <li><a href="#" id="admin-logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <div class="dashboard-header">
+                    <h2>Dashboard Overview</h2>
+                    <button class="btn-primary" onclick="openAddBookModal()">+ Add New Book</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-purple"><i class="fas fa-book"></i></div>
+                        <div>
+                            <h3>Total Books</h3>
+                            <p id="total-books">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-orange"><i class="fas fa-users"></i></div>
+                        <div>
+                            <h3>Total Users</h3>
+                            <p id="total-users">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(0, 184, 148, 0.1); color: #00b894;"><i
+                                class="fas fa-star"></i></div>
+                        <div>
+                            <h3>Total Reviews</h3>
+                            <p id="total-reviews">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Recent Books</h3>
+                <table class="data-table" id="recent-books-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Rating</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Hidden Sections -->
+            <div id="books-section" style="display:none;">
+                <div class="dashboard-header">
+                    <h2>All Books</h2>
+                </div>
+                <table class="data-table" id="all-books-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="users-section" style="display:none;">
+                <div class="dashboard-header">
+                    <h2>All Users</h2>
+                </div>
+                <table class="data-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="reviews-section" style="display:none;">
+                <div class="dashboard-header">
+                    <h2>Manage Reviews</h2>
+                </div>
+                <table class="data-table" id="admin-reviews-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Book</th>
+                            <th>User</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Book Modal -->
+    <div class="modal" id="addBookModal">
+        <div class="modal-content">
+            <h3>Add New Book</h3>
+            <input type="text" id="new-title" class="form-input" placeholder="Book Title">
+            <input type="text" id="new-author" class="form-input" placeholder="Author">
+            <input type="text" id="new-genre" class="form-input" placeholder="Genre" list="genre-list">
+            <textarea id="new-desc" class="form-input" placeholder="Description"></textarea>
+            <input type="number" id="new-rating" class="form-input" placeholder="Rating (0.0 - 5.0)" step="0.1">
+            <input type="number" id="new-rating" class="form-input" placeholder="Rating (0.0 - 5.0)" step="0.1">
+            <label for="new-cover">Cover Image</label>
+            <input type="file" id="new-cover" class="form-input" accept="image/*">
+            <button class="btn-primary" onclick="addBook()">Add Book</button>
+            <button class="btn-text" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Edit Book Modal -->
+    <div class="modal" id="editBookModal">
+        <div class="modal-content">
+            <h3>Edit Book</h3>
+            <input type="hidden" id="edit-book-id">
+            <input type="text" id="edit-title" class="form-input" placeholder="Book Title">
+            <input type="text" id="edit-author" class="form-input" placeholder="Author">
+            <input type="text" id="edit-genre" class="form-input" placeholder="Genre" list="genre-list">
+            <textarea id="edit-desc" class="form-input" placeholder="Description"></textarea>
+            <input type="number" id="edit-rating" class="form-input" placeholder="Rating (0.0 - 5.0)" step="0.1">
+
+            <label for="edit-cover">Cover Image</label>
+            <div style="margin-bottom: 10px;">
+                <img id="edit-cover-preview" src="" alt="Current Cover"
+                    style="max-width: 100px; max-height: 150px; display: none;">
+            </div>
+            <input type="file" id="edit-cover" class="form-input" accept="image/*">
+
+            <button class="btn-primary" onclick="updateBook()">Update Book</button>
+            <button class="btn-text" onclick="closeEditModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <h3>Edit User Role</h3>
+            <input type="hidden" id="edit-user-id">
+            <p id="edit-user-name" style="margin-bottom: 1rem; font-weight: bold;"></p>
+            <select id="edit-user-role" class="form-input">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button class="btn-primary" onclick="updateUser()">Update Role</button>
+            <button class="btn-text" onclick="closeEditUserModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Genre List Datalist -->
+    <datalist id="genre-list"></datalist>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>

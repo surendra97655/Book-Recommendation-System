@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details - BookWise</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-book-open"></i> BookWise
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="featured.html">Featured</a></li>
+                    <li><a href="genres.html">Genres</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-text">Log In</a>
+                <a href="signup.html" class="btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container book-details-container">
+        <div class="details-grid">
+            <!-- Left Side: Cover & Actions -->
+            <aside class="details-sidebar">
+                <img id="details-cover" src="default_book.jpg" alt="Book Cover" class="details-cover">
+
+                <div class="book-actions-group">
+                    <div class="btn-want-to-read-split">
+                        <button class="btn-want-to-read-main">Want to read</button>
+                        <button class="btn-want-to-read-caret"><i class="fas fa-caret-down"></i></button>
+                    </div>
+                    <button class="btn-secondary-action"><i class="fab fa-amazon"></i> Kindle Rs. 0.00</button>
+                    <button class="btn-secondary-action">Rate this book</button>
+                </div>
+
+                <div class="rating-stats" style="margin-top: 30px;">
+                    <p style="font-size: 1.5rem; font-weight: 700; color: #333;">
+                        <i class="fas fa-star stars-gold"></i> <span id="details-rating-val">0.00</span>
+                    </p>
+                    <small style="color: #999;">Community Rating</small>
+                </div>
+            </aside>
+
+            <!-- Right Side: Info -->
+            <section class="details-main">
+                <div class="details-series"><a href="#">Jack Ryan #21</a></div>
+                <h1 id="details-title" class="details-title">Loading...</h1>
+                <div class="details-author">by <a href="#" id="details-author-link">Loading...</a></div>
+
+                <div class="details-rating-row">
+                    <div class="stars-gold">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span style="font-weight: 600;" id="details-avg-rating">0.00</span>
+                    <span style="color: #ccc;">|</span>
+                    <span style="color: #666;">1,234 ratings &bull; 567 reviews</span>
+                </div>
+
+                <div id="details-description" class="details-description">
+                    <!-- Description will be inserted here -->
+                </div>
+
+                <div class="details-genres" id="details-genres">
+                    <!-- Genres will be inserted here -->
+                </div>
+
+                <div style="border-top: 1px solid #eee; padding-top: 25px; margin-top: 40px;">
+                    <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 15px;">Book Details
+                    </h3>
+                    <div
+                        style="display: grid; grid-template-columns: 150px 1fr; gap: 10px; font-size: 0.95rem; color: #555;">
+                        <span><strong>First published</strong></span>
+                        <span>December 25, 2024</span>
+                        <span><strong>ISBN</strong></span>
+                        <span>1234567890 (ISBN13: 9781234567890)</span>
+                        <span><strong>Language</strong></span>
+                        <span>English</span>
+                    </div>
+                </div>
+
+                <!-- Readers also enjoyed -->
+                <div class="recommendations-section">
+                    <h2 class="recommendations-header">Readers also enjoyed</h2>
+                    <div class="recommendations-scroll" id="related-books-container">
+                        <p style="color: #999;">Loading recommendations...</p>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="recommendations-section"
+                    style="border-top: 2px solid #eee; margin-top: 60px; padding-top: 40px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 class="recommendations-header" style="margin-bottom: 0;">Community Reviews</h2>
+                        <button id="write-review-btn" class="btn-primary" style="display: none;">Write a Review</button>
+                    </div>
+
+                    <!-- Review Form (Hidden by default) -->
+                    <div id="review-form-container"
+                        style="display: none; background: #f9f9f9; padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #eee;">
+                        <h3 style="margin-bottom: 15px; font-family: var(--font-heading);">Write a Review</h3>
+                        <div id="star-selector"
+                            style="font-size: 1.5rem; color: #ccc; cursor: pointer; margin-bottom: 15px;">
+                            <i class="far fa-star" data-value="1"></i>
+                            <i class="far fa-star" data-value="2"></i>
+                            <i class="far fa-star" data-value="3"></i>
+                            <i class="far fa-star" data-value="4"></i>
+                            <i class="far fa-star" data-value="5"></i>
+                        </div>
+                        <textarea id="review-text" placeholder="What did you think of this book?"
+                            style="width: 100%; height: 120px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px; resize: none; font-family: inherit;"></textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="submit-review-btn" class="btn-primary">Post Review</button>
+                            <button id="cancel-review-btn" class="btn-text">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div id="reviews-list-container">
+                        <p style="color: #999;">Loading reviews...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            <p>&copy; 2024 BookWise. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

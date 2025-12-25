@@ -25,10 +25,10 @@
             </a>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#" class="active">Home</a></li>
-                    <li><a href="#featured">Featured</a></li>
-                    <li><a href="#genres">Genres</a></li>
-                    <li><a href="#community">Community</a></li>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="featured.html">Featured</a></li>
+                    <li><a href="genres.html">Genres</a></li>
+                    <li><a href="community.html">Community</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
@@ -49,8 +49,8 @@
 
                 <div class="search-box">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" placeholder="Search by title, author, or genre...">
-                    <button>Search</button>
+                    <input type="text" id="searchInput" placeholder="Search by title, author, or genre...">
+                    <button id="searchBtn">Search</button>
                 </div>
 
                 <div class="stats">
@@ -94,78 +94,8 @@
                 <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
             </div>
 
-            <div class="books-grid">
-                <!-- Book Card 1 -->
-                <div class="book-card">
-                    <div class="book-cover">
-                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #1a1a1a, #4a4a4a);">
-                            <span>The Great Gatsby</span>
-                        </div>
-                        <div class="book-rating"><i class="fas fa-star"></i> 4.8</div>
-                    </div>
-                    <div class="book-info">
-                        <h3 class="book-title">The Great Gatsby</h3>
-                        <p class="book-author">F. Scott Fitzgerald</p>
-                        <div class="tags">
-                            <span class="tag">Classic</span>
-                            <span class="tag">Drama</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book Card 2 -->
-                <div class="book-card">
-                    <div class="book-cover">
-                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #c31432, #240b36);">
-                            <span>1984</span>
-                        </div>
-                        <div class="book-rating"><i class="fas fa-star"></i> 4.9</div>
-                    </div>
-                    <div class="book-info">
-                        <h3 class="book-title">1984</h3>
-                        <p class="book-author">George Orwell</p>
-                        <div class="tags">
-                            <span class="tag">Dystopian</span>
-                            <span class="tag">Sci-Fi</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book Card 3 -->
-                <div class="book-card">
-                    <div class="book-cover">
-                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #f12711, #f5af19);">
-                            <span>Dune</span>
-                        </div>
-                        <div class="book-rating"><i class="fas fa-star"></i> 4.7</div>
-                    </div>
-                    <div class="book-info">
-                        <h3 class="book-title">Dune</h3>
-                        <p class="book-author">Frank Herbert</p>
-                        <div class="tags">
-                            <span class="tag">Sci-Fi</span>
-                            <span class="tag">Adventure</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book Card 4 -->
-                <div class="book-card">
-                    <div class="book-cover">
-                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #8360c3, #2ebf91);">
-                            <span>Educated</span>
-                        </div>
-                        <div class="book-rating"><i class="fas fa-star"></i> 4.6</div>
-                    </div>
-                    <div class="book-info">
-                        <h3 class="book-title">Educated</h3>
-                        <p class="book-author">Tara Westover</p>
-                        <div class="tags">
-                            <span class="tag">Memoir</span>
-                            <span class="tag">Non-Fiction</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be loaded here dynamically -->
             </div>
         </div>
     </section>
@@ -178,35 +108,9 @@
                 <p>Dive into your favorite worlds</p>
             </div>
 
-            <div class="categories-grid">
-                <a href="#" class="category-card">
-                    <div class="icon-box" style="background: rgba(255, 107, 107, 0.1); color: #FF6B6B;">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>Sci-Fi</h3>
-                    <p>1,200+ Books</p>
-                </a>
-                <a href="#" class="category-card">
-                    <div class="icon-box" style="background: rgba(78, 205, 196, 0.1); color: #4ECDC4;">
-                        <i class="fas fa-dragon"></i>
-                    </div>
-                    <h3>Fantasy</h3>
-                    <p>3,500+ Books</p>
-                </a>
-                <a href="#" class="category-card">
-                    <div class="icon-box" style="background: rgba(69, 183, 209, 0.1); color: #45B7D1;">
-                        <i class="fas fa-user-secret"></i>
-                    </div>
-                    <h3>Mystery</h3>
-                    <p>2,800+ Books</p>
-                </a>
-                <a href="#" class="category-card">
-                    <div class="icon-box" style="background: rgba(255, 160, 122, 0.1); color: #FFA07A;">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3>Romance</h3>
-                    <p>4,100+ Books</p>
-                </a>
+            <div class="categories-grid" id="homepage-genres-container">
+                <!-- Dynamically populated by script.js -->
+                <p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Loading categories...</p>
             </div>
         </div>
     </section>
@@ -262,6 +166,7 @@
         </div>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 
 </html>

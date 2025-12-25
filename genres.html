@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Genres - BookWise</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header / Navigation -->
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-book-open"></i> BookWise
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="featured.html">Featured</a></li>
+                    <li><a href="genres.html" class="active">Genres</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-text">Log In</a>
+                <a href="signup.html" class="btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section" style="padding: 3rem 0; border-bottom: 1px solid #eee; margin-bottom: 2rem;">
+        <div class="container">
+            <h1 style="font-family: var(--font-heading); font-size: 2.2rem; color: #333;">Genres</h1>
+        </div>
+    </section>
+
+    <!-- Goodreads-Style Two-Column Layout -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="genres-container-grid">
+                <!-- Main Content: Genre Blocks -->
+                <main id="genres-layout-container">
+                    <p>Loading genres...</p>
+                </main>
+
+                <!-- Sidebar: Genre List -->
+                <aside class="genres-sidebar">
+                    <h3>FIND GENRES</h3>
+                    <div class="sidebar-genre-list" id="sidebar-genre-list">
+                        <!-- Populated by script.js -->
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <a href="#" class="logo-light"><i class="fas fa-book-open"></i> BookWise</a>
+            </div>
+            <div class="footer-links">
+                <div class="link-group">
+                    <h4>Platform</h4>
+                    <a href="featured.html">Browse</a>
+                    <a href="community.html">Community</a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2024 BookWise. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
