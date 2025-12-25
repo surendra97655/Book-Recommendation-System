@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookWise - Discover Your Next Favorite Book</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header / Navigation -->
+    <header class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <i class="fas fa-book-open"></i> BookWise
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#featured">Featured</a></li>
+                    <li><a href="#genres">Genres</a></li>
+                    <li><a href="#community">Community</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-text">Log In</a>
+                <a href="signup.html" class="btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="badge">#1 Book Discovery Platform</span>
+                <h1>Find Your Next <br><span class="highlight">Literary Escape</span></h1>
+                <p>Curated recommendations tailored to your taste. Explore thousands of books, track your reading, and
+                    join a community of book lovers.</p>
+
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Search by title, author, or genre...">
+                    <button>Search</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <strong>10k+</strong>
+                        <span>Books</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>50k+</strong>
+                        <span>Readers</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>4.9</strong>
+                        <span>Rating</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <!-- Abstract Book Stack Visual using CSS/HTML -->
+                <div class="abstract-book-composition">
+                    <div class="book-spine spine-1"></div>
+                    <div class="book-spine spine-2"></div>
+                    <div class="book-spine spine-3"></div>
+                    <div class="floating-card">
+                        <i class="fas fa-quote-left"></i>
+                        <p>"A room without books is like a body without a soul."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <section id="featured" class="section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2>Trending This Week</h2>
+                    <p class="subtitle">Top rated books selected by our editors</p>
+                </div>
+                <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="books-grid">
+                <!-- Book Card 1 -->
+                <div class="book-card">
+                    <div class="book-cover">
+                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #1a1a1a, #4a4a4a);">
+                            <span>The Great Gatsby</span>
+                        </div>
+                        <div class="book-rating"><i class="fas fa-star"></i> 4.8</div>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">The Great Gatsby</h3>
+                        <p class="book-author">F. Scott Fitzgerald</p>
+                        <div class="tags">
+                            <span class="tag">Classic</span>
+                            <span class="tag">Drama</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Card 2 -->
+                <div class="book-card">
+                    <div class="book-cover">
+                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #c31432, #240b36);">
+                            <span>1984</span>
+                        </div>
+                        <div class="book-rating"><i class="fas fa-star"></i> 4.9</div>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">1984</h3>
+                        <p class="book-author">George Orwell</p>
+                        <div class="tags">
+                            <span class="tag">Dystopian</span>
+                            <span class="tag">Sci-Fi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Card 3 -->
+                <div class="book-card">
+                    <div class="book-cover">
+                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #f12711, #f5af19);">
+                            <span>Dune</span>
+                        </div>
+                        <div class="book-rating"><i class="fas fa-star"></i> 4.7</div>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">Dune</h3>
+                        <p class="book-author">Frank Herbert</p>
+                        <div class="tags">
+                            <span class="tag">Sci-Fi</span>
+                            <span class="tag">Adventure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Card 4 -->
+                <div class="book-card">
+                    <div class="book-cover">
+                        <div class="placeholder-cover" style="background: linear-gradient(45deg, #8360c3, #2ebf91);">
+                            <span>Educated</span>
+                        </div>
+                        <div class="book-rating"><i class="fas fa-star"></i> 4.6</div>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">Educated</h3>
+                        <p class="book-author">Tara Westover</p>
+                        <div class="tags">
+                            <span class="tag">Memoir</span>
+                            <span class="tag">Non-Fiction</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Genre Categories -->
+    <section id="genres" class="section categories-section">
+        <div class="container">
+            <div class="section-center-header">
+                <h2>Explore by Genre</h2>
+                <p>Dive into your favorite worlds</p>
+            </div>
+
+            <div class="categories-grid">
+                <a href="#" class="category-card">
+                    <div class="icon-box" style="background: rgba(255, 107, 107, 0.1); color: #FF6B6B;">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Sci-Fi</h3>
+                    <p>1,200+ Books</p>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="icon-box" style="background: rgba(78, 205, 196, 0.1); color: #4ECDC4;">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <h3>Fantasy</h3>
+                    <p>3,500+ Books</p>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="icon-box" style="background: rgba(69, 183, 209, 0.1); color: #45B7D1;">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h3>Mystery</h3>
+                    <p>2,800+ Books</p>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="icon-box" style="background: rgba(255, 160, 122, 0.1); color: #FFA07A;">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Romance</h3>
+                    <p>4,100+ Books</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Join Our Literary Circle</h2>
+                <p>Get weekly book recommendations and exclusive author interviews delivered to your inbox.</p>
+                <form class="subscribe-form">
+                    <input type="email" placeholder="Enter your email address">
+                    <button type="button">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <a href="#" class="logo-light">
+                    <i class="fas fa-book-open"></i> BookWise
+                </a>
+                <p>Connecting readers with their next literary obsession.</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-group">
+                    <h4>Platform</h4>
+                    <a href="#">Browse</a>
+                    <a href="#">Community</a>
+                    <a href="#">iOS App</a>
+                </div>
+                <div class="link-group">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2024 BookWise. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>
