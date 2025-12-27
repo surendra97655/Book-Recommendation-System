@@ -152,6 +152,7 @@ async function addBook() {
     const genre = document.getElementById('new-genre').value;
     const description = document.getElementById('new-desc').value;
     const rating = document.getElementById('new-rating').value;
+    const price = document.getElementById('new-price').value;
     const coverFile = document.getElementById('new-cover').files[0];
 
     if (!title || !author) { alert('Title and Author are required'); return; }
@@ -162,6 +163,7 @@ async function addBook() {
     formData.append('genre', genre);
     formData.append('description', description);
     formData.append('rating', rating);
+    formData.append('price', price);
     if (coverFile) {
         formData.append('cover_image', coverFile);
     }
@@ -196,6 +198,7 @@ function openEditBookModal(book) {
     document.getElementById('edit-genre').value = book.genre;
     document.getElementById('edit-desc').value = book.description;
     document.getElementById('edit-rating').value = book.rating;
+    document.getElementById('edit-price').value = book.price;
 
     // Show current image logic
     const imgPreview = document.getElementById('edit-cover-preview');
@@ -221,6 +224,7 @@ async function updateBook() {
     const genre = document.getElementById('edit-genre').value;
     const description = document.getElementById('edit-desc').value;
     const rating = document.getElementById('edit-rating').value;
+    const price = document.getElementById('edit-price').value;
     const coverFile = document.getElementById('edit-cover').files[0];
 
     const formData = new FormData();
@@ -230,6 +234,7 @@ async function updateBook() {
     formData.append('genre', genre);
     formData.append('description', description);
     formData.append('rating', rating);
+    formData.append('price', price);
 
     if (coverFile) {
         formData.append('cover_image', coverFile);

@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Global Access Control ---
+    const isBookDetailsPage = window.location.pathname.includes('book-details.html');
+    const userName = localStorage.getItem('user_name');
+    const isLoggedIn = userName && userName !== 'null' && userName !== 'undefined';
+
+    if (isBookDetailsPage && !isLoggedIn) {
+        window.location.replace('login.html');
+        return;
+    }
 
     // --- Signup Form Handling ---
     const signupButton = document.querySelector('#signup-btn'); // You need to add this ID to signup.html button
@@ -78,17 +87,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const booksGrid = document.getElementById('booksGrid');
 
-    const performSearch = async (genre = null) => {
+    const performSearch = async (genre = null, limit = null) => {
         const query = searchInput ? searchInput.value : '';
         let url = `api/books.php?search=${encodeURIComponent(query)}`;
 
         if (genre) {
-            url = `api/books.php?genre=${encodeURIComponent(genre)}`;
+            url += `&genre=${encodeURIComponent(genre)}`;
+        }
+
+        if (limit) {
+            url += `&limit=${limit}`;
         }
 
         try {
             const response = await fetch(url);
-            const books = await response.json();
+            let books = await response.json();
 
             // Clear existing grid
             if (booksGrid) {
@@ -121,11 +134,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>`;
                     }
 
+                    const isWishlisted = window.userWishlistIDs && window.userWishlistIDs.has(parseInt(book.id));
+                    const heartClass = isWishlisted ? 'fas' : 'far';
+
                     const bookData = encodeURIComponent(JSON.stringify(book));
                     const bookCard = `
-                        <div class="book-card" style="cursor: pointer;" onclick="showBookDetails('${bookData}')">
+                        <div class="book-card" style="cursor: pointer; position: relative;" onclick="showBookDetails('${bookData}')">
                             <div class="book-cover">
                                 ${coverHtml}
+                                <button class="wishlist-heart-btn" onclick="toggleWishlistOnCard(event, ${book.id})">
+                                    <i class="${heartClass} fa-heart"></i>
+                                </button>
                                 <div class="book-rating"><i class="fas fa-star"></i> ${book.rating}</div>
                             </div>
                             <div class="book-info">
@@ -200,11 +219,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         coverHtml = `<div style="width:100%; height:100%; background:#f0f0f0; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; color:#999; font-size:9px; overflow:hidden; padding:5px; text-align:center;">${book.title}</div>`;
                     }
                     const bookData = encodeURIComponent(JSON.stringify(book));
+                    const isWishlisted = window.userWishlistIDs && window.userWishlistIDs.has(parseInt(book.id));
+                    const heartClass = isWishlisted ? 'fas' : 'far';
+
                     return `
-                                    <div class="genre-book-item" style="cursor:pointer;" onclick="showBookDetails('${bookData}')">
+                                    <div class="genre-book-item" style="cursor:pointer; position: relative;" onclick="showBookDetails('${bookData}')">
                                         <div class="genre-book-cover">
                                             ${coverHtml}
                                         </div>
+                                        <button class="wishlist-heart-btn" onclick="toggleWishlistOnCard(event, ${book.id})">
+                                            <i class="${heartClass} fa-heart"></i>
+                                        </button>
                                     </div>
                                 `;
                 }).join('')}
@@ -314,7 +339,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // If URL has genre param, use it
         const urlParams = new URLSearchParams(window.location.search);
         const genreParam = urlParams.get('genre');
-        performSearch(genreParam);
+
+        // If on homepage (index.html), limit to 4 books initially
+        const viewAllBtn = document.getElementById('viewAllTrending');
+        const isHomepage = viewAllBtn !== null;
+
+        if (isHomepage && !genreParam) {
+            performSearch(null, 4);
+        } else {
+            performSearch(genreParam);
+        }
+
+        // Handle View All on homepage
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch(); // Load all without limit
+                viewAllBtn.style.display = 'none'; // Hide button after showing all
+            });
+        }
     }
 
     if (genresLayoutContainer) {
@@ -326,6 +369,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // --- Book Details Redirect/Loading ---
     window.showBookDetails = (bookDataStr) => {
+        const userName = localStorage.getItem('user_name');
+        if (!userName) {
+            alert('Please log in to view book details.');
+            window.location.href = 'login.html';
+            return;
+        }
+
         try {
             const book = JSON.parse(decodeURIComponent(bookDataStr));
             window.location.href = `book-details.html?id=${book.id}`;
@@ -347,9 +397,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`api/books.php?id=${bookId}`);
+            // Added timestamp to bust any cache
+            const response = await fetch(`api/books.php?id=${bookId}&t=${new Date().getTime()}`);
             if (!response.ok) throw new Error('Book not found');
             const book = await response.json();
+            console.log('Book Data Received:', book);
+            console.log('Book Price:', book.price);
 
             // Populate Page
             document.title = `${book.title} - BookWise`;
@@ -357,11 +410,30 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('details-author-link').textContent = book.author;
             document.getElementById('details-rating-val').textContent = book.rating;
             document.getElementById('details-avg-rating').textContent = book.rating;
+            const formattedPrice = `Rs. ${parseFloat(book.price || 0).toFixed(2)}`;
+
+            const priceEl = document.getElementById('details-price');
+            const priceTagEl = document.getElementById('details-price-tag');
+
+            if (priceEl) {
+                priceEl.textContent = formattedPrice;
+                console.log('Successfully updated details-price to:', formattedPrice);
+            } else {
+                console.warn('Could not find element with id details-price');
+            }
+
+            if (priceTagEl) {
+                priceTagEl.textContent = formattedPrice;
+                console.log('Successfully updated details-price-tag to:', formattedPrice);
+            }
+
             document.getElementById('details-description').innerHTML = book.description ? book.description.replace(/\n/g, '<br>') : 'No description available.';
 
             const coverImg = document.getElementById('details-cover');
             if (book.cover_image && book.cover_image !== 'default_book.jpg' && !book.cover_image.endsWith('default_book.jpg')) {
                 coverImg.src = book.cover_image;
+            } else {
+                coverImg.src = 'https://via.placeholder.com/300x450?text=No+Cover';
             }
 
             // Genre chips
@@ -525,9 +597,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             container.innerHTML = related.map(book => {
                 const bookData = encodeURIComponent(JSON.stringify(book));
+                const isWishlisted = window.userWishlistIDs && window.userWishlistIDs.has(parseInt(book.id));
+                const heartClass = isWishlisted ? 'fas' : 'far';
+
                 return `
-                    <div class="rec-item" onclick="showBookDetails('${bookData}')">
+                    <div class="rec-item" onclick="showBookDetails('${bookData}')" style="position: relative; cursor: pointer;">
                         <img src="${book.cover_image || 'default_book.jpg'}" alt="${book.title}" class="rec-cover">
+                        <button class="wishlist-heart-btn" onclick="toggleWishlistOnCard(event, ${book.id})" style="width: 25px; height: 25px; top: 5px; left: 5px;">
+                            <i class="${heartClass} fa-heart" style="font-size: 0.8rem;"></i>
+                        </button>
                     </div>
                 `;
             }).join('');
@@ -576,3 +654,250 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkLoginState();
 });
+// --- Wishlist Logic ---
+window.checkWishlistStatus = async (bookId) => {
+    try {
+        const response = await fetch(`api/wishlist.php?action=check&book_id=${bookId}`);
+        const data = await response.json();
+        if (data.success) {
+            updateWishlistUI(data.in_wishlist);
+        }
+    } catch (error) {
+        console.error("Failed to check wishlist status:", error);
+    }
+};
+
+// --- Global Wishlist State ---
+window.userWishlistIDs = new Set();
+const fetchUserWishlistIDs = async () => {
+    try {
+        const response = await fetch('api/wishlist.php');
+        const data = await response.json();
+        if (data.success && data.wishlist) {
+            window.userWishlistIDs = new Set(data.wishlist.map(b => parseInt(b.id)));
+        }
+    } catch (error) {
+        console.error("Failed to fetch wishlist IDs:", error);
+    }
+};
+
+window.toggleWishlistOnCard = async (event, bookId) => {
+    if (event) event.stopPropagation();
+
+    try {
+        const response = await fetch('api/wishlist.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ book_id: bookId })
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+            if (data.error === 'User not logged in') {
+                alert("Please login to save books to your wishlist!");
+                window.location.href = 'login.html';
+            } else {
+                alert("Error: " + data.error);
+            }
+            return;
+        }
+
+        // Update global state
+        if (data.action === 'added') {
+            window.userWishlistIDs.add(parseInt(bookId));
+        } else {
+            window.userWishlistIDs.delete(parseInt(bookId));
+        }
+
+        // Update all heart icons for this book on the current page
+        const hearts = document.querySelectorAll(`.wishlist-heart-btn[onclick*="${bookId}"] i`);
+        hearts.forEach(icon => {
+            if (data.action === 'added') {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        });
+
+        // Special case: if on book-details.html, update the main wishlist button too
+        if (window.location.pathname.includes('book-details.html')) {
+            const mainBtnBookId = new URLSearchParams(window.location.search).get('id');
+            if (mainBtnBookId == bookId) {
+                updateWishlistUI(data.action === 'added');
+            }
+        }
+
+        // Special case: if on wishlist.html, remove the card if it was removed
+        if (window.location.pathname.includes('wishlist.html') && data.action === 'removed') {
+            const card = event.target.closest('.book-card');
+            if (card) {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    // If no more books, show empty message
+                    if (document.querySelectorAll('.book-card').length === 0) {
+                        const emptyMsg = document.getElementById('empty-wishlist');
+                        if (emptyMsg) emptyMsg.style.display = 'block';
+                    }
+                }, 300);
+            }
+        }
+
+    } catch (error) {
+        console.error("Wishlist toggle on card failed:", error);
+        alert("Failed to update wishlist. Please try again.");
+    }
+};
+
+window.toggleWishlist = async () => {
+    const bookId = new URLSearchParams(window.location.search).get('id');
+    if (!bookId) return;
+
+    try {
+        const response = await fetch('api/wishlist.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ book_id: bookId })
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`Server returned ${response.status}: ${text}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            if (data.error === 'User not logged in') {
+                alert("Please login to save books to your wishlist!");
+                window.location.href = 'login.html';
+            } else {
+                alert("Error: " + data.error);
+            }
+            return;
+        }
+
+        // Update global state
+        if (data.action === 'added') {
+            window.userWishlistIDs.add(parseInt(bookId));
+        } else {
+            window.userWishlistIDs.delete(parseInt(bookId));
+        }
+
+        updateWishlistUI(data.action === 'added');
+
+        // Optional: show a small toast or alert
+        // alert(data.action === 'added' ? "Added to wishlist!" : "Removed from wishlist!");
+
+    } catch (error) {
+        console.error("Wishlist toggle failed:", error);
+        alert("Failed to update wishlist: " + error.message);
+    }
+};
+
+function updateWishlistUI(isInWishlist) {
+    const icon = document.getElementById('wishlist-icon');
+    const btn = document.getElementById('wishlist-btn');
+    if (icon && btn) {
+        if (isInWishlist) {
+            btn.innerHTML = '<i id="wishlist-icon" class="fas fa-heart" style="color: #e74c3c;"></i> In Wishlist';
+        } else {
+            btn.innerHTML = '<i id="wishlist-icon" class="far fa-heart"></i> Save to Wishlist';
+        }
+    }
+}
+
+// Initial check for wishlist on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    const userName = localStorage.getItem('user_name');
+    if (userName && userName !== 'null') {
+        await fetchUserWishlistIDs();
+
+        // Re-run search/performSearch to update icons if they were already rendered
+        // In most cases, performSearch is called AFTER DOMContentLoaded or by user action
+    }
+
+    const bookId = new URLSearchParams(window.location.search).get('id');
+    if (bookId && window.location.pathname.includes('book-details.html')) {
+        checkWishlistStatus(bookId);
+    }
+});
+
+window.togglePurchaseDropdown = (event) => {
+    if (event) event.stopPropagation();
+    const dropdown = document.getElementById("purchase-dropdown-content");
+    if (dropdown) {
+        dropdown.classList.toggle("show");
+    }
+};
+
+window.processPayment = async (method) => {
+    const bookTitle = document.getElementById("details-title").textContent;
+    const price = document.getElementById("details-price").textContent;
+
+    // Close dropdown after selection
+    const dropdown = document.getElementById("purchase-dropdown-content");
+    if (dropdown) dropdown.classList.remove("show");
+
+    if (method === "esewa") {
+        const bookId = new URLSearchParams(window.location.search).get('id');
+        if (!bookId) {
+            alert("Error: Book ID not found");
+            return;
+        }
+
+        try {
+            const response = await fetch('api/generate_esewa_signature.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ book_id: bookId })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Server returned ${response.status}: ${text}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert("Error from server: " + data.error);
+                return;
+            }
+
+            // Populate hidden form
+            document.getElementById('esewa-amount').value = data.amount;
+            document.getElementById('esewa-total_amount').value = data.total_amount;
+            document.getElementById('esewa-transaction_uuid').value = data.transaction_uuid;
+            document.getElementById('esewa-signature').value = data.signature;
+            document.getElementById('esewa-success_url').value = data.success_url;
+            document.getElementById('esewa-failure_url').value = data.failure_url;
+
+            // Submit form to eSewa
+            document.getElementById('esewa-form').submit();
+
+        } catch (error) {
+            console.error("eSewa initiation failed:", error);
+            alert("Failed to initiate eSewa payment: " + error.message);
+        }
+    } else if (method === "cash") {
+        alert("Order placed successfully for " + bookTitle + "! You can pay " + price + " on delivery.");
+    }
+};
+
+// Close dropdown when clicking outside
+window.onclick = (event) => {
+    if (!event.target.matches('.purchase-main-btn') && !event.target.closest('.purchase-main-btn')) {
+        const dropdowns = document.getElementsByClassName("purchase-dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+};

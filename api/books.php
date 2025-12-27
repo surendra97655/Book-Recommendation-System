@@ -4,12 +4,14 @@ require_once '../db_connect.php';
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $genre = isset($_GET['genre']) ? trim($_GET['genre']) : '';
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 0;
 
 try {
     $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
     if ($id > 0) {
-        $sql = "SELECT * FROM books WHERE id = :id";
+        $sql = "SELECT id, title, author, genre, description, rating, price, cover_image, created_at 
+                FROM books WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
         $book = $stmt->fetch();
@@ -22,7 +24,7 @@ try {
         exit;
     }
 
-    $sql = "SELECT * FROM books WHERE 1=1";
+    $sql = "SELECT id, title, author, genre, description, rating, price, cover_image, created_at FROM books WHERE 1=1";
     $params = [];
 
     if (!empty($search)) {
@@ -36,6 +38,10 @@ try {
     }
 
     $sql .= " ORDER BY created_at DESC";
+
+    if ($limit > 0) {
+        $sql .= " LIMIT " . (int)$limit;
+    }
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);

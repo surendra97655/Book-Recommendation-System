@@ -5,13 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Details - BookWise</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Hide content until login is verified */
+        body {
+            visibility: hidden;
+            opacity: 0;
+        }
+    </style>
+    <script>
+        (function () {
+            const userName = localStorage.getItem('user_name');
+            // Check for null, undefined, or empty string
+            if (!userName || userName === 'null' || userName === 'undefined') {
+                window.location.replace('login.html');
+            } else {
+                // User is logged in, show the page
+                document.documentElement.style.visibility = 'visible';
+                window.addEventListener('DOMContentLoaded', () => {
+                    document.body.style.visibility = 'visible';
+                    document.body.style.opacity = '1';
+                });
+            }
+        })();
+    </script>
 </head>
 
 <body>
@@ -26,6 +49,7 @@
                     <li><a href="featured.html">Featured</a></li>
                     <li><a href="genres.html">Genres</a></li>
                     <li><a href="community.html">Community</a></li>
+                    <li><a href="wishlist.html">Wishlist</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
@@ -39,15 +63,43 @@
         <div class="details-grid">
             <!-- Left Side: Cover & Actions -->
             <aside class="details-sidebar">
-                <img id="details-cover" src="default_book.jpg" alt="Book Cover" class="details-cover">
+                <img id="details-cover" alt="Book Cover" class="details-cover" style="background-color: #f0f0f0;">
 
                 <div class="book-actions-group">
                     <div class="btn-want-to-read-split">
                         <button class="btn-want-to-read-main">Want to read</button>
                         <button class="btn-want-to-read-caret"><i class="fas fa-caret-down"></i></button>
                     </div>
-                    <button class="btn-secondary-action"><i class="fab fa-amazon"></i> Kindle Rs. 0.00</button>
-                    <button class="btn-secondary-action">Rate this book</button>
+                    <div class="purchase-dropdown">
+                        <div class="purchase-split-container">
+                            <button class="btn-secondary-action purchase-main-btn" onclick="processPayment('cash')">
+                                Purchase: <span id="details-price">Rs. 0.00</span>
+                            </button>
+                            <button class="purchase-caret-btn" onclick="togglePurchaseDropdown(event)">
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                        </div>
+                        <div id="purchase-dropdown-content" class="purchase-dropdown-content">
+                            <a href="javascript:void(0)" onclick="processPayment('esewa')">
+                                <i class="fas fa-wallet" style="color: #60bb46;"></i> Pay via eSewa
+                                <i class="fas fa-external-link-alt dropdown-link-icon"></i>
+                            </a>
+                            <a href="javascript:void(0)" onclick="processPayment('cash')">
+                                <i class="fas fa-money-bill-wave" style="color: #444;"></i> Cash on Delivery
+                                <i class="fas fa-external-link-alt dropdown-link-icon"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="wishlist-container" style="margin-top: 15px;">
+                        <button id="wishlist-btn" class="btn-secondary-action" onclick="toggleWishlist()">
+                            <i id="wishlist-icon" class="far fa-heart"></i> Save to Wishlist
+                        </button>
+                    </div>
+                    <button class="btn-secondary-action"
+                        onclick="document.getElementById('review-form').scrollIntoView({behavior: 'smooth'})"
+                        style="margin-top: 10px;">
+                        Rate this book
+                    </button>
                 </div>
 
                 <div class="rating-stats" style="margin-top: 30px;">
@@ -96,6 +148,9 @@
                         <span>1234567890 (ISBN13: 9781234567890)</span>
                         <span><strong>Language</strong></span>
                         <span>English</span>
+                        <span><strong>Book Price</strong></span>
+                        <span><strong style="color: var(--primary-color);" id="details-price-tag">Rs.
+                                0.00</strong></span>
                     </div>
                 </div>
 
@@ -106,6 +161,8 @@
                         <p style="color: #999;">Loading recommendations...</p>
                     </div>
                 </div>
+
+
 
                 <!-- Reviews Section -->
                 <div class="recommendations-section"
@@ -150,7 +207,23 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Hidden eSewa Payment Form -->
+    <form id="esewa-form" action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+        <input type="hidden" id="esewa-amount" name="amount" required>
+        <input type="hidden" id="esewa-tax_amount" name="tax_amount" value="0" required>
+        <input type="hidden" id="esewa-total_amount" name="total_amount" required>
+        <input type="hidden" id="esewa-transaction_uuid" name="transaction_uuid" required>
+        <input type="hidden" id="esewa-product_code" name="product_code" value="EPAYTEST" required>
+        <input type="hidden" id="esewa-product_service_charge" name="product_service_charge" value="0" required>
+        <input type="hidden" id="esewa-product_delivery_charge" name="product_delivery_charge" value="0" required>
+        <input type="hidden" id="esewa-success_url" name="success_url" required>
+        <input type="hidden" id="esewa-failure_url" name="failure_url" required>
+        <input type="hidden" id="esewa-signed_field_names" name="signed_field_names"
+            value="total_amount,transaction_uuid,product_code" required>
+        <input type="hidden" id="esewa-signature" name="signature" required>
+    </form>
+
+    <script src="script.js?v=1.2"></script>
 </body>
 
 </html>

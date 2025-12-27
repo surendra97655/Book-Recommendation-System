@@ -25,6 +25,7 @@ elseif ($method === 'POST') {
     $genre = isset($data['genre']) ? ucwords(strtolower(trim($data['genre']))) : null;
     $description = $data['description'] ?? null;
     $rating = $data['rating'] ?? null;
+    $price = $data['price'] ?? 0.00;
     $id = $data['id'] ?? null;
     
     // Handle File Upload
@@ -53,8 +54,8 @@ elseif ($method === 'POST') {
 
     if ($id) {
         // --- UPDATE ---
-        $updateFields = "title=?, author=?, genre=?, description=?, rating=?";
-        $params = [$title, $author, $genre, $description, $rating];
+        $updateFields = "title=?, author=?, genre=?, description=?, rating=?, price=?";
+        $params = [$title, $author, $genre, $description, $rating, $price];
         
         if ($coverPath) {
             $updateFields .= ", cover_image=?";
@@ -73,8 +74,8 @@ elseif ($method === 'POST') {
     } else {
         // --- CREATE ---
         $coverPath = $coverPath ?: 'default_book.jpg';
-        $stmt = $pdo->prepare("INSERT INTO books (title, author, genre, description, rating, cover_image) VALUES (?, ?, ?, ?, ?, ?)");
-        if($stmt->execute([$title, $author, $genre, $description, $rating, $coverPath])) {
+        $stmt = $pdo->prepare("INSERT INTO books (title, author, genre, description, rating, price, cover_image) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        if($stmt->execute([$title, $author, $genre, $description, $rating, $price, $coverPath])) {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Insert failed']);
