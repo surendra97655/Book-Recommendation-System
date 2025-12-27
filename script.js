@@ -577,18 +577,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         try {
-            // Get the first genre if multiple exist
-            const primaryGenre = genreStr ? genreStr.split(',')[0].trim() : '';
-            if (!primaryGenre) {
-                container.innerHTML = '<p style="color: #999;">No similar books found.</p>';
-                return;
-            }
-
-            const response = await fetch(`api/books.php?genre=${encodeURIComponent(primaryGenre)}`);
-            const books = await response.json();
-
-            // Filter out current book and limit to 6
-            const related = books.filter(b => b.id != currentId).slice(0, 6);
+            // Using the new content-based recommendation API
+            const response = await fetch(`api/recommendations.php?action=related&book_id=${currentId}`);
+            const related = await response.json();
 
             if (related.length === 0) {
                 container.innerHTML = '<p style="color: #999;">No similar books found.</p>';
@@ -612,6 +603,69 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error('Error fetching related books:', e);
             container.innerHTML = '';
+        }
+    };
+
+    const loadPersonalizedRecommendations = async () => {
+        const recommendationsSection = document.getElementById('personalized-recommendations');
+        const grid = document.getElementById('recommendationsGrid');
+        const userId = localStorage.getItem('user_id');
+
+        if (!recommendationsSection || !grid || !userId) return;
+
+        try {
+            const response = await fetch(`api/recommendations.php?action=personalized&user_id=${userId}`);
+            const books = await response.json();
+
+            if (books.length > 0) {
+                recommendationsSection.style.display = 'block';
+                grid.innerHTML = '';
+
+                books.forEach((book, index) => {
+                    const gradients = [
+                        'linear-gradient(45deg, #1a1a1a, #4a4a4a)',
+                        'linear-gradient(45deg, #c31432, #240b36)',
+                        'linear-gradient(45deg, #f12711, #f5af19)',
+                        'linear-gradient(45deg, #8360c3, #2ebf91)',
+                        'linear-gradient(45deg, #00c6ff, #0072ff)',
+                        'linear-gradient(45deg, #ff9966, #ff5e62)'
+                    ];
+                    const randomGradient = gradients[index % gradients.length];
+
+                    let coverHtml = '';
+                    if (book.cover_image && book.cover_image !== 'default_book.jpg' && !book.cover_image.endsWith('default_book.jpg')) {
+                        coverHtml = `<img src="${book.cover_image}" alt="${book.title}" style="width:100%; height:100%; object-fit:cover;">`;
+                    } else {
+                        coverHtml = `<div class="placeholder-cover" style="background: ${randomGradient};"><span>${book.title}</span></div>`;
+                    }
+
+                    const isWishlisted = window.userWishlistIDs && window.userWishlistIDs.has(parseInt(book.id));
+                    const heartClass = isWishlisted ? 'fas' : 'far';
+
+                    const bookData = encodeURIComponent(JSON.stringify(book));
+                    const bookCard = `
+                        <div class="book-card" style="cursor: pointer; position: relative;" onclick="showBookDetails('${bookData}')">
+                            <div class="book-cover">
+                                ${coverHtml}
+                                <button class="wishlist-heart-btn" onclick="toggleWishlistOnCard(event, ${book.id})">
+                                    <i class="${heartClass} fa-heart"></i>
+                                </button>
+                                <div class="book-rating"><i class="fas fa-star"></i> ${book.rating}</div>
+                            </div>
+                            <div class="book-info">
+                                <h3 class="book-title">${book.title}</h3>
+                                <p class="book-author">${book.author}</p>
+                                <div class="tags">
+                                    <span class="tag">${book.genre || 'Fiction'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.insertAdjacentHTML('beforeend', bookCard);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading personalized recommendations:', error);
         }
     };
 
@@ -653,6 +707,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     checkLoginState();
+    if (userName) {
+        loadPersonalizedRecommendations();
+    }
 });
 // --- Wishlist Logic ---
 window.checkWishlistStatus = async (bookId) => {
